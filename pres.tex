@@ -8,6 +8,7 @@
 % try later
 %\setmathfont{texgyrepagella-math.otf}
 \usepackage{tikz}
+\usetikzlibrary{automata, positioning}
 
 \usetheme{Warsaw}
 
@@ -19,13 +20,39 @@
 \newtheorem{lmm}{Lemma}
 \newtheorem{fct}{Fakt}
 
+\title{Zeitdiskrete Markowketten}
+\author{Marcel Wienöbst}
+\date{19.12.2017}
 \begin{document}
-% TODO: wdhle ergodisch etc
+\maketitle
 \begin{frame}{Gambler's Ruin}
   \begin{itemize}
   \item Das Gambler's Ruin Problem wird auf dem Wertebereich $\{0,1,2,\dots\}$ betrachtet.
+    \begin{tikzpicture}
+      % Add the states
+      \node[state]             (zero) {$0$};
+      \node[state, right=of zero] (one) {$1$};
+      \node[state, right=of one] (two) {$2$};
+      \node[state, right=of two] (three) {$3$};
+      \node[right=of three] (dots) {...};
+        
+      % Connect the states with arrows
+      \draw[every loop]
+      (zero) edge[loop above]  node {1} (zero)
+      (one) edge[bend right, auto=left] node {$q$} (zero)
+      (one) edge[bend right, auto=right] node {$p$} (two)
+      (two) edge[bend right, auto=left] node {$q$} (one)
+      (two) edge[bend right, auto=right] node {$p$} (three)
+      (three) edge[bend right, auto=left] node {$q$} (two)
+      (three) edge[bend right, auto=right] node {$p$} (dots)
+      (dots) edge[bend right, auto=left] node {$q$} (three);
+    \end{tikzpicture}
   \item Zur Erinnerung: $A_k(1)$ ist die Wahrscheinlichkeit des Ruins (Absorption bei $x=0$, wenn mit Kapital $k$ gestartet wird).
   \item Weiterhin gilt: $A_k(t) = c_1 λ_1^k + c_2 λ_2^k$, aber nun $A_0(t) = 1$ und $\lim_{k→∞}|A_k(t)| < ∞$
+  \end{itemize}
+\end{frame}
+\begin{frame}{Gambler's Ruin}
+  \begin{itemize}
   \item Es folgt:
     \[
       a_k = A_k(1) =
@@ -44,15 +71,22 @@
     \]
   \end{itemize}
 \end{frame}
-
+\begin{frame}{Wiederholung}
+  Eigenschaften von Markowketten:
+  \begin{itemize}
+  \item irreduzibel
+  \item aperiodisch
+  \item transient/rekurrent
+  \item ergodisch
+  \end{itemize}
+\end{frame}
 \begin{frame}{Stationäre Wahrscheinlichkeitsverteilungen}
   \begin{defi}
-    Eine stationäre Wahrscheinlichkeitsverteilung einer Markowkette mit den Zuständen $\{1,2,...\}$ ist der nichtnegative Vektor $π = (π_1,π_2,...)^T$, der die Bedingungen $Pπ = π$ und $Σ_{i=1}^∞π_i = 1$ erfüllt.
+    Eine stationäre Wahrscheinlichkeitsverteilung einer Markowkette mit den Zuständen $\{1,2,...\}$   ist der nichtnegative Vektor $π = (π_1,π_2,...)^T$, der die Bedingungen $Pπ = π$ und $Σ_{i=1}^∞π_i = 1$ erfüllt.
   \end{defi}
-  \begin{fact}
+  \begin{fct}
     Für endliche Markowketten existiert immer eine stationäre Verteilung.
-    %TODO: explain
-  \end{fact}
+  \end{fct}
 \end{frame}
 \begin{frame}
   \begin{thm}
@@ -72,16 +106,30 @@
   \begin{thm}
     In einer endlichen Markowkette kann es keine
     null rekurrenten Zustände geben und nicht alle Zustände
-    können transient sein. Daher ist jede endliche Markowkette positiv
+    können transient sein. Daher ist jede endliche, irreduzible Markowkette positiv
     rekurrent.  
   \end{thm}
-  \begin{itemize}
-    \item Beweis an der Tafel.
-  \end{itemize}
+  Dazu:
+  \begin{lmm}
+    Ist $j$ ein transienter Zustand einer Markovkette und $i$ ein
+    beliebiger Zustand der Markovkette, dann gilt:
+    \[
+      \lim_{n→∞} p_{ji}^{(n)} = 0
+    \]
+  \end{lmm}
 \end{frame}
 \begin{frame}{Weitere Eigenschaften endlicher Markowketten}
   \begin{itemize}
-  \item Bei einer naiven Berechnungsmethode der Mean Recurrence Time und der Mean First Passage Time müssten die Matrixelemente $\{f_{ii}^{(n)}\}$ und $\{f_{ji}^{(n)}\}$ betrachtet werden.
+  \item Wir definieren die Matrix der erwarteten Ersteintrittswahrscheinlichkeiten bzw{.} Wiederkehrzeiten als:
+    \[
+      M = (μ_{ij}) = \begin{pmatrix}
+        μ_{11} & μ_{12} & \dots & μ_{1N} \\
+        μ_{21} & μ_{22} & \dots & μ_{2N} \\
+        \vdots & \vdots & \dots & \vdots \\
+        μ_{N1} & μ_{N2} & \dots & μ_{NN}
+      \end{pmatrix}
+    \]
+  \item Bei einer naiven Berechnungsmethode von $M$ müssten die Wahrscheinlichkeiten $\{f_{ii}^{(n)}\}$ und $\{f_{ji}^{(n)}\}$ betrachtet werden.
   \item Stattdessen können die folgenden Gleichungen aufgestellt werden:
     \[
       μ_{ji} = p_{ji} + Σ_{k=1,k≠j}^Np_{ki}(1+μ_{jk}) = 1+Σ_{k=1,k≠j}^Np_{ki}μ_{jk}.
@@ -131,6 +179,25 @@
 \end{frame}
 \begin{frame}{Geburts- und Todesprozesse}
   \begin{itemize}
+  \item Als gerichteter Graph ergibt sich:
+    \begin{tikzpicture}
+      % Add the states
+      \node[state]             (zero) {$0$};
+      \node[state, right=of zero] (one) {$1$};
+      \node[state,right=of two] (dots) {$\dots$};
+      \node[state,right=of dots] (ult) {$N$};
+        
+      % Connect the states with arrows
+      \draw[every loop]
+      (zero) edge[loop above]  node {1} (zero)
+      (one) edge[bend right, auto=left] node {$d_1$} (zero)
+      (one) edge[bend right, auto=right] node {$b_1$} (dots)
+      (one) edge[loop above] node {$1-(b_{1}+d_{1})$} (one)
+      (dots) edge[bend right, auto=left] node {$d_{2}$} (one)
+      (dots) edge[bend right, auto=right] node {$b_{N-1}$} (ult)
+      (ult) edge[bend right, auto=left] node {$d_N$} (dots)
+      (ult) edge[loop above] node {$1-d_{N}$} (ult);
+    \end{tikzpicture}
   \item Es gibt zwei kommunizierende Klassen $\{0\}$ und $\{1,2,\dots,N\}$. Dabei ist $\{0\}$ positiv rekurrent und alle weiteren Zustände sind transient.
   \item Es existiert eine
     eindeutige stationäre Verteilung $π$, wobei $π_0 = 1$ und $π_i = 0$
@@ -148,6 +215,11 @@
       τ_k = b_k(1+τ_{k+1}) + d_k(1 + τ_{k-1}) + (1-(b_k + d_k))(1+τ_k).
     \]
     und $τ_N = d_N(1+τ_{N-1}) + (1-d_N)(1+τ_N)$.
+  \item Diese Differenzengleichung kann vereinfacht werden zu:
+    \[
+      d_kτ_{k-1} - (b_k+d_k)τ_k + b_kτ_{k+1} = -1
+    \]
+    für $k = 1,2,\dots,N-1$. Für $k = N$ ergibt sich $d_Nτ_{N-1} - d_Nτ_N = -1$.
   \end{itemize}
 \end{frame}
 \begin{frame}{Geburts- und Todesprozesse}
@@ -208,9 +280,6 @@
     \item \[b_i = r(i - \frac{i^2}{2K}) \text{ und } d_i = r\frac{i^2}{2K}, \; i = 0,1,2,\dots,2K \]
     \item \[b_i = \begin{cases} ri,  &i = 0,1,2,\dots,N-1 \\ 0, &i \geq N \end{cases} \text{ und } d_i = r\frac{i^2}{K}, i = 0,1,\dots,N\]
     \end{enumerate}
-    % an der Tafel kurz zeigen, dass die Bedingung erfüllt ist
-  \item Nach der Berechnung von $D^{-1}$ und $τ = D^{-1}c$ kann die erwartete Zeit bis zum Aussterben geplottet werden:
-    % TODO (auch logistisches Wachstum plotten?
   \end{itemize}
 \end{frame}
 \begin{frame}{Quasistationäre Verteilung}
@@ -222,7 +291,6 @@
              &= \frac{p_i(n)}{1-p_0(n)}
     \end{align*}
   \item Dabei ist $q(n) = (q_1(n),q_2(n), \dots, q_N(n))^T$ eine Wahrscheinlichkeitsverteilung.
-    % an der Tafel zeigen
   \end{itemize}
 \end{frame}
 \begin{frame}{Quasistationäre Verteilung}
@@ -261,7 +329,7 @@
 \end{frame}
 \begin{frame}{Quasistationäre Verteilung}
   \begin{itemize}
-    \item Die Übergangsmatrix $\bar{P}$ ist eine Submatrix von $P$, wobei $d_1 = 0$.
+  \item Die zu dieser Approximation gehörige Übergangsmatrix $\bar{P}$ ist eine Submatrix von $P$, wobei $d_1 = 0$.
       \[
       \bar{P} = \begin{pmatrix}
         1-b_1 & d_2 & \dots & 0 & 0 \\
