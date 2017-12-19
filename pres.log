@@ -1,4 +1,4 @@
-This is LuaTeX, Version 1.0.4 (TeX Live 2017/Debian)  (format=lualatex 2017.10.23)  18 DEC 2017 12:32
+This is LuaTeX, Version 1.0.4 (TeX Live 2017/Debian)  (format=lualatex 2017.10.23)  19 DEC 2017 12:44
  restricted system commands enabled.
  file:line:error style messages enabled.
 **\input pres.tex
@@ -21,7 +21,7 @@ Inserting `luaotfload.aux.patch_cambria_domh' at position 2 in `luaotfload.patch
 Inserting `luaotfload.aux.fixup_fontdata' at position 1 in `luaotfload.patch_font_unsafe'.
 Inserting `luaotfload.aux.set_capheight' at position 3 in `luaotfload.patch_font'.
 Inserting `luaotfload.rewrite_fontname' at position 4 in `luaotfload.patch_font'.
-luaotfload | main : initialization completed in 0.104 seconds
+luaotfload | main : initialization completed in 0.319 seconds
 (./pres.tex (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamer.cls
 Document Class: beamer 2017/07/13 v3.42 A class for typesetting presentations
 (/usr/share/texlive/texmf-dist/tex/latex/beamer/beamerbasemodes.sty
@@ -1749,10 +1749,10 @@ Here is how much of LuaTeX's memory you used:
    158 hlist, 23 vlist, 16 rule, 51 disc, 6 local_par, 82 math, 336 glue, 47 ker
 n, 29 penalty, 416 glyph, 246 attribute, 63 glue_spec, 246 attribute_list, 3 wri
 te, 14 pdf_literal, 22 pdf_colorstack nodes
-   avail lists: 1:8,2:1014,3:605,4:122,5:132,6:1132,7:795,8:54,9:317,10:13,11:16
-0
+   avail lists: 1:8,2:1014,3:605,4:122,5:132,6:1151,7:800,8:54,9:317,10:13,11:16
+1
  38382 multiletter control sequences out of 65536+600000
- 80 fonts using 23783087 bytes
+ 80 fonts using 23782935 bytes
  56i,18n,71p,889b,956s stack positions out of 5000i,500n,10000p,200000b,100000s
 </usr/share/texmf/fonts/opentype/public/lm-math/latinmodern-math.otf></usr/share
 /texmf/fonts/opentype/public/lm/lmsans10-oblique.otf></usr/share/texmf/fonts/ope
@@ -1761,7 +1761,7 @@ ntype/public/lm/lmroman10-regular.otf></usr/share/texmf/fonts/opentype/public/lm
 modern-math.otf></usr/share/texmf/fonts/opentype/public/lm/lmsans8-regular.otf><
 /usr/share/texmf/fonts/opentype/public/lm/lmsans10-regular.otf></usr/share/texmf
 /fonts/opentype/public/lm/lmsans12-regular.otf>
-Output written on pres.pdf (20 pages, 90777 bytes).
+Output written on pres.pdf (20 pages, 90814 bytes).
 
 PDF statistics: 638 PDF objects out of 1000 (max. 8388607)
  572 compressed objects within 6 object streams

@@ -111,8 +111,8 @@
   \end{thm}
   Dazu:
   \begin{lmm}
-    Ist $j$ ein transienter Zustand einer Markovkette und $i$ ein
-    beliebiger Zustand der Markovkette, dann gilt:
+    Ist $j$ ein transienter Zustand einer Markowkette und $i$ ein
+    beliebiger Zustand der Markowkette, dann gilt:
     \[
       \lim_{n→∞} p_{ji}^{(n)} = 0
     \]
@@ -120,7 +120,7 @@
 \end{frame}
 \begin{frame}{Weitere Eigenschaften endlicher Markowketten}
   \begin{itemize}
-  \item Wir definieren die Matrix der erwarteten Ersteintrittswahrscheinlichkeiten bzw{.} Wiederkehrzeiten als:
+  \item Wir definieren die Matrix der erwarteten Ersteintrittszeiten bzw{.} Wiederkehrzeiten als:
     \[
       M = (μ_{ij}) = \begin{pmatrix}
         μ_{11} & μ_{12} & \dots & μ_{1N} \\
@@ -142,13 +142,13 @@
 \end{frame}
 \begin{frame}{Geburts- und Todesprozesse}
   \begin{itemize}
-  \item Modellierung einer Population durch eine diskrete Markowkette, wobei der Zustand $X_n$ die Größe der Population angibt.
+  \item Modellierung einer Population durch eine diskrete Markowkette, wobei der Zustand $X_n$ die Größe der Population nach $n$ Schritten angibt.
   \item Zwei Fälle:
     \begin{enumerate}
     \item Die Population ist begrenzt: $X_n \in \{0,1,2,\dots,N\}$.
     \item Die Population ist unbegrenzt: $X_n \in \{0,1,2,\dots\}$.
     \end{enumerate}
-  \item In jedem Schritt $n → n+1$ eine Geburt, ein Tod oder eine unveränderte Populationsgröße.
+  \item In jedem Schritt $n → n+1$ eine Geburt, einen Tod oder eine unveränderte Populationsgröße.
   \item $b_i$ ist die Wahrscheinlichkeit einer Geburt, $d_i$ die Wahrscheinlichkeit eines Todes. Dabei gibt $i$ die Populationsgröße an. Wir setzen $b_0 = d_0 = 0$ und bei einer beschränkten Population $b_N = 0$.
   \end{itemize}
 \end{frame}
