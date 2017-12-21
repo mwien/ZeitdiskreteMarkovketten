@@ -2,9 +2,11 @@
 \usepackage{polyglossia}
 \setdefaultlanguage{german}
 
+\usepackage{geometry}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{unicode-math}
+\usepackage{hyperref}
 % try later
 %\setmathfont{texgyrepagella-math.otf}
 \usepackage{tikz}
@@ -16,22 +18,60 @@
 \newtheorem{thm}{Theorem}
 \newtheorem{lemma}{Lemma}
 
-\begin{document}
+\author{Marcel Wienöbst}
+\date{\today}
+\title{Zeitdiskrete Markowketten}
 
-Ich beginne zunächst damit, an die Ausarbeitung von Eva Martenstein
-anknüpfend, das unbeschränkte Gambler's Ruin Problem, zu diskutieren. Im Anschluss führe ich wichtige Grundlagen diskreter Markovketten ein. Im
-Anschluss daran betrachte ich die Modellierung von allgemeinen
-Geburts- und Sterbeprozessen durch Markovketten sowie logistische Wachstumsprozesse. Dabei beschränke ich mich auf endliche Modelle.
+\begin{document}
+\maketitle
+
+\section{Einleitung}
+Ich beginne zunächst damit, an die Ausarbeitung von Eva Martenstein \cite{eva}
+anknüpfend, das unbeschränkte Gambler's Ruin Problem zu diskutieren. Im Anschluss führe ich wichtige Grundlagen diskreter Markowketten ein. Darauf aufbauend betrachte ich die Modellierung von allgemeinen Geburts- und Sterbeprozessen durch Markowketten sowie logistische Wachstumsprozesse. Dabei beschränke ich mich auf endliche Modelle.
+
+Für eine bessere Intuition der verschiedenen Populationsmodelle, habe ich eine Vielzahl von Plots und Simulationen angefertigt. Diese sind als Ergänzung zu dieser Ausarbeitung zu verstehen und unter \href{https://nbviewer.jupyter.org/github/mwien/jupyter/blob/master/Seminar.ipynb}{https://nbviewer.jupyter.org/github/mwien/jupyter/blob/master/Seminar.ipynb} abrufbar.
 \section{Das unbeschränkte Gambler's Ruin Problem}
-Die Position $x$ repräsentiert das Kapital des Spielers und in jedem Schritt erhöht sich das Kapital auf $x+1$ oder es sinkt auf $x-1$. Diese Übergänge treten mit Wahrscheinlichkeit $p$ bzw{.} $q$ auf. Wir betrachten dieses Szenario nun auf dem Wertebereich $\{0,1,2,\dots\}$. 
+Das unbeschränkte Gambler's Ruin Problem beschreibt das folgende Szenario:
+Die Position $x$ repräsentiert das Kapital eines Spielers und in jedem Schritt erhöht sich das Kapital auf $x+1$ oder es sinkt auf $x-1$. Diese Übergänge treten mit Wahrscheinlichkeit $p$ bzw{.} $q$ auf. Der Wertebereich ist $\{0,1,2,\dots\}$. Dies kann als Spiel gegen die \emph{Bank} interpretiert werden. Das bedeutet wiederum, dass der Spieler entweder unendlich lange spielt oder die Bank gewinnt (der Spieler verliert sein gesamtes Kapital und landet im Zustand $x = 0$). Es ergeben sich damit die Fragen nach der Wahrscheinlichkeit, dass der Spieler vom Kapital $k$ ausgehend verliert, und die erwartete Dauer bis dies geschieht.
+
+Betrachten wir zunächst erstere Fragestellung. In der Ausarbeitung von Eva Martenstein \cite{eva} wird diese Wahrscheinlichkeit als $A_k(1)$ beschrieben, wobei die allgemeine Lösung von $A_k(t)$ die Form
+\[
+  A_k(t) = c_1λ_1^k + c_2λ_2^k
+\]
+hatte. Nun ändern sich die Randbedingungen zu:
+\[
+  A_0(t) = 1 \text{ und } \lim_{k→∞}|A_k(t)| < ∞
+\]
+Für die genaue Herleitung der Lösung sei auf Kapitel 3.4 von Allen in \cite{allen} verwiesen. Es ergibt sich:
+\[
+  a_k = A_k(1) =
+  \begin{cases}
+    1 &\text{wenn } p \leq q, \\
+    (q/p)^k &\text{wenn } p > q
+  \end{cases}
+\]
+Das bedeutet, dass der Spieler immer verliert, solange das Spiel nicht zu seinen Gunsten ist. Insbesondere also auch im Falle des \emph{fairen} Spiels für $p = q$. Dieses paradoxe Resultat verleiht dem Gambler's Ruin Problem seinen Namen.
+
+Nun betrachten wir die Frage nach der erwarteten Dauer bis zum Verlust, wenn der Spieler mit Kapital $k$ beginnt. Wir geben diese als $τ_k$ an:
+\[
+  τ_k =
+  \begin{cases}
+    k/(q-p), &\text{wenn } p < q, \\
+    ∞, &\text{wenn } p \geq q.
+  \end{cases}
+\]
+Interessant ist erneut den Fall $p = q$ zu betrachten. Hier verliert der Spieler mit Wahrscheinlichkeit 1, die Dauer ist jedoch $∞$.
+
+Abschließend sei angemerkt, dass das Gambler's Ruin Problem auch als Modellierung einer Population aufgefasst werden kann, wobei der Zustand $x$ in diesem Fall die Größe der Population angibt. Dieses Modell hat jedoch einige Einschränkungen. So bleibt die Populationsgröße nie konstant, sondern vergrößert oder verkleinert sich in jedem Schritt. Außerdem sind die Übergangswahrscheinlichkeiten $p$ und $q$ unabhängig von der Populationsgröße. Wir werden dieses Modell daher im weiteren Verlauf dieser Ausarbeitung verallgemeinern. 
 \section{Stationäre Wahrscheinlichkeitsverteilungen}
+Wir betrachten nun einige wichtige theoretische Ergebnisse, die uns bei der späteren Analyse der Populationsmodelle behilflich sind.
 \begin{defi}
-  Eine stationäre Wahrscheinlichkeitsverteilung einer Markovkette mit den Zuständen $\{1,2,...\}$ ist der nichtnegative Vektor $π = (π_1,π_2,...)^T$, der die Bedingungen $Pπ = π$ und $Σ_{i=1}^∞π_i = 1$ erfüllt.
+  Eine stationäre Wahrscheinlichkeitsverteilung einer Markowkette mit den Zuständen $\{1,2,...\}$ ist der nichtnegative Vektor $π = (π_1,π_2,...)^T$, der die Bedingungen $Pπ = π$ und $Σ_{i=1}^∞π_i = 1$ erfüllt.
 \end{defi}
 Eine solche stationäre Verteilung stellt also einen
 Gleichgewichtszustand dar. Wird diese Verteilung zu einem bestimmten
 Zeitpunkt erreicht, so bleibt diese von dort an konstant.
-Wir betrachten den Spezialfall, dass die Markovkette endlich ist. In
+Wir betrachten den Spezialfall, dass die Markowkette endlich ist. In
 diesem Fall existiert immer eine stationäre Verteilung. Dies ist
 leicht zu sehen, wenn die obige Bedingung einer stationären
 Wahrscheinlichkeitsverteilung als Eigenwertproblem betrachtet wird:
@@ -39,15 +79,17 @@ Wahrscheinlichkeitsverteilung als Eigenwertproblem betrachtet wird:
   Pπ = λπ
 \]
 Folglich ist die stationäre Verteilung $π$ der Eigenvektor zum
-Eigenwert $λ=1$ und für stochastische Matrizen ist dies auch immer ein
-Eigenwert. Der Eigenvektor kann nun skaliert werden, dass die sich die
+Eigenwert $λ=1$ und dieser existiert auch, da stochastische Matrizen den
+Eigenwert 1 besitzen. Der Eigenvektor kann nun skaliert werden, sodass die sich die
 Elemente zu 1 aufaddieren. Die gefundene stationäre Verteilung ist
-jedoch nicht notwendigerweise eindeutig. Dies ist nur dann der Fall,
-wenn die Markovkette irreduzibel ist. Ist die Markovkette zusätzlich
-positiv rekurrent (TODO) und aperiodisch (und damit dann stark
-ergodisch), so gilt das folgende, stärkere Theorem:
+jedoch nicht notwendigerweise eindeutig, da bei dem Falle von mehreren Eigenvektoren zum Eigenwert 1 einen Vektorraum aufgespannt wird.
+
+Wir spezifieren die Bedingungen an eine Markowkette, die eine eindeutige stationäre Verteilung hat, nun genauer. Ist die Markowkette irreduzibel,
+positiv rekurrent und aperiodisch (und damit dann stark
+ergodisch), so gilt das folgende Theorem, welches außerdem eine Aussage über den Grenzwert der Verteilung angibt:
 \begin{thm}
-  Eine Markovkette sei stark ergodisch mit den Zuständen
+  \label{tm0}
+  Eine Markowkette sei stark ergodisch mit den Zuständen
   $\{1,2,\dots\}$ und der Übergangsmatrix $P$. Dann existiert eine
   eindeutige stationäre Verteilung $π = (π_1,π_2,\dots)^T$, $Pπ = π$,
   sodass
@@ -55,28 +97,32 @@ ergodisch), so gilt das folgende, stärkere Theorem:
     \lim_{n →∞}p_{ij}^{(n)} = π_i, \text{ für } i,j=1,2,\dots
   \]
 \end{thm}
-\section{Weitere Eigenschaften endlicher Markovketten}
-Das folgende Theorem benennt die wichtigsten Eigenschaften endlicher
-Markovketten.
+Der Beweis dieser Aussage kann bei Karlin und Taylor (1975) \cite{kt} nachgelesen werden.
+\section{Weitere Eigenschaften endlicher Markowketten}
+Das folgende Theorem benennt zentrale Eigenschaften endlicher
+Markowketten.
 \begin{thm}
-In einer endlichen Markovkette kann es keine
-null recurrent states (TODO) geben und nicht alle Zustände
-können transient sein. Daher ist jede endliche Markovkette positiv
+  \label{tm1}
+In einer endlichen Markowkette kann es keine
+null rekurrenten Zustände geben und nicht alle Zustände
+können transient sein. Daher ist jede endliche Markowkette positiv
 rekurrent.  
 \end{thm}
 Wir beweisen diese Ergebnisse kurz unter Zuhilfenahme des folgenden
-Lemmas.
+Lemmas (ohne Beweis).
 \begin{lemma}
-  Ist $j$ ein transienter Zustand einer Markovkette und $i$ ein
-  beliebiger Zustand der Markovkette, dann gilt:
+  \label{lm1}
+  Ist $j$ ein transienter Zustand einer Markowkette und $i$ ein
+  beliebiger Zustand der Markowkette, dann gilt:
   \[
     \lim_{n→∞} p_{ji}^{(n)} = 0
   \]
 \end{lemma}
-(TODO: proof lemma)
+
 \begin{proof}
-Aus diesem Lemma folgt nun direkt, dass nicht alle Zustände transient
-sein können, da dann
+  Wir beweisen nun Theorem \ref{tm1}:
+  Aus Lemma \ref{lm1} folgt direkt, dass nicht alle Zustände transient
+  sein können, da dann
 \[
   \lim_{n→∞} p_{ji}^{(n)} = 0, \text{ für } i = 1,2,\dots,N,
 \]
@@ -85,23 +131,36 @@ wobei $N$ die Anzahl der Zustände ist. Dann würde aber gelten:
   \lim_{n→∞} P^n = 0_{N×N}
 \]
 Die Matrix $P^n$ soll jedoch eine stochastische Matrix sein, also
-$Σ_{j=1}^Np_{ji}^{(n)}$. Dann widerspricht $\sum_{j=1}^N \lim_{n→∞}
-p_{ji}^{(n)} = 1$ jedoch dem obigen Grenzwert.
-(TODO: proof rest)
+$Σ_{j=1}^Np_{ji}^{(n)}$. Dann widerspricht
+\[
+  \sum_{j=1}^N \lim_{n→∞}
+  p_{ji}^{(n)} = 1
+\]
+jedoch dem obigen Grenzwert.
+
+Wir zeigen nun durch einen Widerspruchsbeweis, dass es keine null rekurrenten Zustände geben kann.
+Nehmen wir also an, es gibt einen null rekurrenten Zustand $i∈C$, wobei $C$ eine Klasse von Zuständen ist. Es kann gezeigt werden, dass diese Klasse geschlossen ist und alle Zustände null rekurrent sind (s. Korollar 2.2 in \cite{allen}). Dann würde aber nach dem bekannten Grenzwertsatz $\lim_{n→∞} p_{ij}^{(n)} = 1 / μ_{ii}$ und damit $\lim_{n→∞} p_{ij}^{(n)} = 0$ für alle $i,j ∈ C$ gelten. Dies wäre jedoch ein Widerspruch zu der Voraussetzung, dass die Submatrix $P_C$ von $P$ eine stochastische Matrix ist (s{.} obige Argumentation).
+
+Ist die Markowkette nun irreduzibel, so gibt es nur eine Klasse, und da weder alle Zustände transient sein können noch ein null rekurrenter Zustand existiert, müssen folglich alle Zustände positiv rekurrent sein. 
 \end{proof}
-Eine direkte Folgerung aus obigem Theorem ist es, dass Theorem (ref 1
-TODO) für endliche Markovketten gilt, wenn diese irreduzibel und
+Eine direkte Folgerung aus obigem Theorem ist es, dass Theorem \ref{tm0}
+für endliche Markowketten gilt, wenn diese irreduzibel und
 aperiodisch sind.
-Eine weitere Eigenschaft endlicher Markovketten ist es, dass eine
-Klasse genau dann rekurrent ist, wenn sie geschlossen ist.
-(TODO: hier Thm und proof?)
-(TODO: was ist mit Rekursion für recurrence und passage time sowie
-n-step trans. matrix)
-Wir betrachten nun eine Berechnungsmethode für die Mean Recurrence Time und die Mean First Passage Time (TODO:deutsch?). Anstatt die Matrixelemente $\{f_{ii}^{(n)}\}$ und $\{f_{ji}^{(n)}\}$ zu berechnen, kann ein lineares Gleichungssystem aufgestellt werden. Dabei wird die folgende Beziehung ausgenutzt:
+
+Wir betrachten nun eine Berechnungsmethode für die erwartete Wiederkehrzeit und die erwartet Ersteintrittszeit. Dazu definieren wir die Matrix dieser als:
+\[
+  M = (μ_{ij}) = \begin{pmatrix}
+    μ_{11} & μ_{12} & \dots & μ_{1N} \\
+    μ_{21} & μ_{22} & \dots & μ_{2N} \\
+    \vdots & \vdots & \dots & \vdots \\
+    μ_{N1} & μ_{N2} & \dots & μ_{NN}
+  \end{pmatrix}
+\]
+Anstatt die Wahrscheinlichkeiten $\{f_{ii}^{(n)}\}$ und $\{f_{ji}^{(n)}\}$ zu berechnen, kann ein lineares Gleichungssystem aufgestellt werden. Dabei wird die folgende Beziehung ausgenutzt:
 \[
   μ_{ji} = p_{ji} + Σ_{k=1,k≠j}^Np_{ki}(1+μ_{jk}) = 1+Σ_{k=1,k≠j}^Np_{ki}μ_{jk}.
 \]
-Die Idee dieses Ansatzes ist, dass wir entweder in einem Schritt von $i$ nach $j$ gelangen oder zunächst einen weiteren Zustand $k$ erreichen. Die erwartete Zeit in diesem Fall ist nun die Zeit von $k$ nach $j$ zu gelangen, wobei der eine Schritt der bereits absolviert wurde auf das Resultat addiert werden muss. Diese erwarteten Zeiten sind gewichtet mit den Übergangswahrscheinlichkeiten. Diese Gleichungen können in Matrixform aufgeschrieben werden:
+Die Idee dieses Ansatzes ist, dass wir entweder in einem Schritt von $i$ nach $j$ gelangen oder zunächst einen weiteren Zustand $k$ erreichen. Die erwartete Zeit in diesem Fall ist nun die Zeit von $k$ nach $j$ zu gelangen, wobei der eine Schritt der bereits absolviert wurde, auf das Resultat addiert werden muss. Diese erwarteten Zeiten sind gewichtet mit den Übergangswahrscheinlichkeiten. Diese Gleichungen können in Matrixform aufgeschrieben werden:
 \[
   M = 1_{N,N} + (M - \text{diag}(M))P
 \]
@@ -109,7 +168,7 @@ Es kann gezeigt werden, dass dieses lineare Gleichungssystem eine eindeutige Lö
 
 \section{Geburts- und Todesprozesse}
 Wir modellieren nun eine Population durch eine diskrete
-Markovkette. Dabei gibt der Zustand $X_n$ die Größe der Population
+Markowkette. Dabei gibt der Zustand $X_n$ die Größe der Population nach $n$ Schritten
 an. Diese kann entweder endlich mit $X_n \in \{0,1,2,\dots,N\}$ oder
 unendlich mit $X_n \in \{0,1,2,\dots\}$ sein.
 In jedem Schritt $n → n+1$ wird angenommen, dass entweder
@@ -118,7 +177,7 @@ unverändert bleibt. Ein solcher Schritt muss also ein angmessen
 kleines Zeitintervall modellieren. Die Wahrscheinlichkeit einer Geburt
 bzw{.} eines Todes werden mit $b_i$ bzw{.} $d_i$ angegeben, wobei das
 $i$ die Populationsgröße angibt. Wir setzen $b_0 = d_0 = 0$ fest,
-ebenso wie im Falle einer endlichen Markovkette (bzw{.} einer
+ebenso wie im Falle einer endlichen Markowkette (bzw{.} einer
 beschränkten Population mit maximaler Größe $N$) $b_N = 0$. Dann sind
 also die Übergangswahrscheinlichkeiten folgendermaßen definiert:
 \begin{align*}
@@ -135,8 +194,7 @@ ist, muss gelten:
 \[
   \sup_{i\in\{1,2,\dots} \{b_i + d_i\} \leq 1
 \]
-(TODO: vllt Graph tikzen?)
-Wir betrachten zunächst den endlichen Fall einer durch $N$
+Wir betrachten von nun an den endlichen Fall einer durch $N$
 beschränkten Population.
 Es kann leicht nachvollzogen werden, dass der Zustand 0 positiv
 rekurrent ist, während alle anderen transient sind. Es existiert eine
@@ -176,8 +234,13 @@ folgt $\det(D_N) \neq 0$ (ohne Beweis). Weil darüber hinaus $\det(D) =
 \[
   τ = D^{-1}c
 \]
-(TODO: hier noch genaue Berechnung des Resultats reinpacken?)
-(TODO: ein paar Beispiele plotten oder noh coolere Sachen?)
+Eine analytische Lösung wurde 1982 von Nisbet und Gurney präsentiert \cite{ng}:
+\[
+  τ_m = \begin{cases}
+    1/d_1 + Σ_{i=2}^N \frac{b_1\cdots b_{i-1}}{d_1, \cdots, d_i}, &m = 1 \\
+    τ_1 + Σ_{s=1}^{m-1}\left(\frac{d_1\cdots d_s}{b_1\cdots b_s} Σ_{i = s+1}^N \frac{b_1\cdots b_{i-1}}{d_1\cdots d_i}\right), &m = 2, \dots N.
+  \end{cases}
+\]
 \section{Logistische Wachstumsprozesse}
 Wir betrachten weiterhin allgemeine Geburts- und Sterbeprozesse. Wir
 wählen dabei die Wahrscheinlichkeiten $b_i$ und $d_i$ so, dass der
@@ -187,12 +250,11 @@ Differentialgleichung zugrunde liegt:
 \[
   \frac{dy}{dt} = ry\left(1-\frac{y}{K}\right), \; y(0) = y_0 > 0.
 \]
-Dabei ist der Parameter $r$ die Wachstumsrate und $K$ eine Obergrenze (TODO?)
+Dabei ist der Parameter $r$ die Wachstumsrate und $K$ eine Obergrenze
 für die Population. Es ist bekannt, dass die eindeutige Lösung $y(t)$
 den Grenzwert $\lim_{t→∞} y(t) = K$ besitzt.
 
-Wir definieren nun einen logistischen Wachstumsprozess der folgenden
-Form:
+Wir charakterisieren nun einen logistischen Wachstumsprozess durch die folgende Gleichung:
 \[
   b_i-d_i = ri(1 - i/K),
 \]
@@ -210,14 +272,12 @@ wählen:
   \end{cases}
          \text{ und } d_i = r\frac{i^2}{K}, \; i = 0,1,\dots,N
 \end{align}
-(TODO: Sachen plotten)
 Es fallen einige Unterschiede zum deterministischen Modell auf: Die
 Population wird mit Sicherheit Aussterben (dies war uns bereits durch
 Erkenntnisse des vorigen Kapitels bekannt) und damit nicht den
-Grenzwert $K$ erreichen. Jedoch kann für lange Aussterbezeiten eine
-quasistationäre Verteilung erreicht werden.
+Grenzwert $K$ erreichen. Darüber hinaus sind auch Populationsgrößen möglich, die $K$ überschreiten.
 \section{Quasistationäre Verteilungen}
-Um diese genauer zu untersuchen betrachten wir die folgende bedingte Wahrscheinlichkeit:
+Um die beiden Modelle (das deterministische logistische Wachstum und den logistischen Wachstumsprozess) miteinander zu vereinbaren, schließen wir die Möglichkeit des Aussterbens in letzterem Modell aus. Dazu betrachten wir die folgende bedingte Wahrscheinlichkeit:
 \begin{align*}
   q_i(n) &= P(X_n=i|X_j \neq 0, j = 0,1,2,\dots,n-1) \\
          &= \frac{p_i(n)}{1-p_0(n)}
@@ -227,6 +287,46 @@ Dabei sei $\{X_n\}$ für $n = 0,1,2,\dots$  ein allgemeiner Geburts- und Sterbep
 \[
   Σ_{i=1}^N q_i(n) = \frac{Σ_{i=1}^Np_i(n)}{1-p_0(n)} = \frac{1-p_0(n)}{1-p_0(n)} = 1
 \]
-gilt. Wir betrachten also eine Verteilung, welche bedingt durch das Nichtaussterben in $n$ Schritten ist. Die zugehörige Markovkette kann auf eine stationäre Verteilung untersucht werden und diese wird nicht (wie zuvor) das Aussterben sein. 
+gilt. Wir betrachten also eine Verteilung, welche bedingt durch das Nichtaussterben in $n$ Schritten ist. Die zugehörige Markowkette kann auf eine stationäre Verteilung untersucht werden und diese wird nicht (wie zuvor) das Aussterben sein. Dazu stellen wir zunächst die Differenzengleichung für $q_i(n+1)$ auf.
+\begin{align*}
+  q_i(n+1) &= \frac{p_i(n+1)}{1-p_0(n+1)} \\
+           &= \left(\frac{p_i(n+1)}{1-p_0(n)}\right)\left(\frac{1-p_0(n)}{1-p_0(n+1)}\right) \\
+           &= \left(\frac{p_i(n+1)}{1-p_0(n)}\right)\left(\frac{1-p_0(n)}{1-p_0(n)-d_1p_1(n)}\right)
+\end{align*}
+Dies kann wiederum umgeformt werden zu:
+\begin{align*}
+  q_i(n+1)(1-d_1q_1(n)) &= \left(\frac{p_i(n+1)}{1-p_0(n)}\right) \\
+                        &= b_{i-1}q_{i-1}(n) + (1-b_i-d_i)q_i(n) + d_{i+1}q_{i+1}(n)
+\end{align*}
+Eine analytische Lösung der stationären Verteilung aus dieser Gleichung kann nicht direkt gefunden werden. Nåsell hat in \cite{nsll} eine numerische Methode vorgeschlagen. In dieser Ausarbeitung hingegen beschränken wir uns auf eine Approximation der Lösung, indem wir $d_1 = 0$ annehmen. Insbesondere für den logistischen Wachstumsprozess ist dies eine vernünftige Annahme, da hier im Allgemeinen $d_1 \approx 0$ gilt. Damit folgt:
+\[
+  \bar{q}_i(n+1) = b_{i-1}\bar{q}_{i-1}(n) + (1 - b_i - d_i)\bar{q}_i(n) + d_{i+1}\bar{~}{q}_{i+1}(n)
+\]
+für $i = 2,\dots, N-1$. Für $i = 1$ bzw{.} $i = N$ gilt:
+\[
+  \bar{q}_1(n+1) = (1 - b_1)\bar{q}_1(n) + d_2\bar{q}_2(n)
+\]
+und
+\[
+  \bar{q}_N(n+1) = b_{N-1}\bar{q}_{N-1}(n) + (1-d_N)\bar{q}_N(n).
+\]
+Die zu dieser Approximation gehörige Übergangsmatrix $\bar{P}$ ist eine Submatrix von $P$, wobei $d_1 = 0$.
+\[
+  \bar{P} = \begin{pmatrix}
+    1-b_1 & d_2 & \dots & 0 & 0 \\
+    b_1 & 1 - (b_2 + d_2) &  \dots & 0 & 0 \\
+    0 & b_2 & \dots & 0 & 0 \\
+    \vdots & \vdots & \vdots & \vdots & \vdots \\
+    0 & 0  &  \dots & 1 - (b_{N-1} + d_{N-1}) & d_N \\
+    0 & 0  &  \dots & b_{N-1} & 1 - d_N \\
+  \end{pmatrix}
+\]
+Die Markowkette ist stark ergodisch und hat damit eine eindeutige Wahrscheinlichkeitsverteilung $\bar{q}^*$, $\bar{P}\bar{q}^* = \bar{q}^*$.
+Es kann darüber hinaus gezeigt werden, dass diese die folgende Bedingung erfüllt:
+\[
+  \bar{q}^*_{i+1} = \frac{b_i \cdots b_1}{d_{i+1}\cdots d_2}\bar{q}^*_{i}
+\]
 
+\bibliography{markov}
+\bibliographystyle{acm}
 \end{document}

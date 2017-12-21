@@ -1,0 +1,30 @@
+\begin{thebibliography}{1}
+
+\bibitem{allen}
+{\sc Allen, L.}
+\newblock {\em An Introduction to Stochastic Processes with Applications to
+  Biology}.
+\newblock CRC Press, 2003.
+
+\bibitem{kt}
+{\sc Karlin, S., and Taylor, H.}
+\newblock {\em A First Course in Stochastic Processes}.
+\newblock Academic Press, 1975.
+
+\bibitem{eva}
+{\sc Martenstein, E.}
+\newblock {Zeitdiskrete Markowketten}.
+\newblock Seminar Mathematische Modelle der Lebenswissenschaften, 2017.
+
+\bibitem{ng}
+{\sc Nisbet, R., and Gurney, W.}
+\newblock {\em Modelling Fluctuating Populations}.
+\newblock John Wiley And Sons, 1982.
+
+\bibitem{nsll}
+{\sc Nåsell, I.}
+\newblock On the quasi-stationary distribution of the stochastic logistic
+  epidemic.
+\newblock {\em Math. Biosci. 156\/} (1999), 21--40.
+
+\end{thebibliography}
